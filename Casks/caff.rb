@@ -4,10 +4,10 @@ cask "caff" do
 
   url "https://github.com/majiayu000/caff/releases/download/v#{version}/Caff-#{version}.zip"
   name "Caff"
-  desc "Menu bar app that keeps macOS awake during long-running agent tasks"
+  desc "Menu bar app that keeps the machine awake during long-running agent tasks"
   homepage "https://github.com/majiayu000/caff"
 
-  depends_on macos: ">= :ventura"
+  depends_on macos: :ventura
 
   app "Caff.app"
 
