@@ -1,6 +1,6 @@
 cask "caff" do
-  version "0.1.1"
-  sha256 "9f4634ef2b25a34e7df6534b628184feac8da8a06d8608fd2d06bf8da83701ed"
+  version "0.1.2"
+  sha256 "e896013e6b9f103c2d3a632b36768a14b4b158389af7120382be964a3fc93f53"
 
   url "https://github.com/majiayu000/caff/releases/download/v#{version}/Caff-#{version}.zip"
   name "Caff"
