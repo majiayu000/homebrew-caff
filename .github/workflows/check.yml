@@ -1,0 +1,33 @@
+name: Tap check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  cask:
+    runs-on: macos-latest
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: "1"
+      HOMEBREW_NO_ENV_HINTS: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Tap local checkout
+        run: |
+          brew untap majiayu000/caff || true
+          brew tap majiayu000/caff "$GITHUB_WORKSPACE"
+
+      - name: Audit cask
+        run: brew audit --cask --tap majiayu000/caff caff
+
+      - name: Check style
+        run: brew style Casks/caff.rb
+
+      - name: Show cask info
+        run: brew info --cask majiayu000/caff/caff
