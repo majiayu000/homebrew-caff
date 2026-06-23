@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   cask:
-    runs-on: macos-latest
+    runs-on: macos-15
     env:
       HOMEBREW_NO_AUTO_UPDATE: "1"
       HOMEBREW_NO_ENV_HINTS: "1"
@@ -20,7 +20,9 @@ jobs:
 
       - name: Tap local checkout
         run: |
-          brew untap majiayu000/caff || true
+          if brew tap | grep -qx "majiayu000/caff"; then
+            brew untap majiayu000/caff
+          fi
           brew tap majiayu000/caff "$GITHUB_WORKSPACE"
 
       - name: Audit cask
