@@ -33,3 +33,55 @@ jobs:
 
       - name: Show cask info
         run: brew info --cask majiayu000/caff/caff
+
+      - name: Verify pinned zip
+        run: |
+          set -euo pipefail
+          cask="Casks/caff.rb"
+          version="$(awk -F'"' '/^  version / { print $2; exit }' "$cask")"
+          expected_sha="$(awk -F'"' '/^  sha256 / { print $2; exit }' "$cask")"
+          if [[ -z "$version" || -z "$expected_sha" ]]; then
+            echo "Could not read version or sha256 from $cask" >&2
+            exit 1
+          fi
+          work="$(mktemp -d)"
+          trap 'rm -rf "$work"' EXIT
+          zip_path="$work/Caff-${version}.zip"
+          url="https://github.com/majiayu000/caff/releases/download/v${version}/Caff-${version}.zip"
+          curl --fail --location --retry 3 --output "$zip_path" "$url"
+          actual_sha="$(shasum -a 256 "$zip_path" | awk '{ print $1 }')"
+          if [[ "$actual_sha" != "$expected_sha" ]]; then
+            echo "sha256 mismatch: expected ${expected_sha} got ${actual_sha}" >&2
+            exit 1
+          fi
+          ditto -x -k "$zip_path" "$work"
+          app="$work/Caff.app"
+          if [[ ! -d "$app" ]]; then
+            echo "zip did not contain Caff.app" >&2
+            exit 1
+          fi
+          codesign_out="$(codesign -dv --verbose=4 "$app" 2>&1)"
+          printf '%s\n' "$codesign_out"
+          if grep -Eq 'Signature=adhoc|flags=0x[0-9a-fA-F]+\([^)]*adhoc' <<<"$codesign_out"; then
+            echo "Caff.app is ad-hoc signed" >&2
+            exit 1
+          fi
+          if ! grep -q 'Authority=Developer ID Application:' <<<"$codesign_out"; then
+            echo "Caff.app has no Developer ID Application identity" >&2
+            exit 1
+          fi
+          team="$(sed -n 's/^TeamIdentifier=//p' <<<"$codesign_out" | head -n 1)"
+          if [[ -z "$team" || "$team" == "not set" ]]; then
+            echo "Caff.app has no TeamIdentifier" >&2
+            exit 1
+          fi
+          identifier="$(sed -n 's/^Identifier=//p' <<<"$codesign_out" | head -n 1)"
+          if [[ "$identifier" != "com.starlight.caff" ]]; then
+            echo "unexpected bundle identifier: ${identifier:-missing}" >&2
+            exit 1
+          fi
+          qattr="0083;$(date +%s);Homebrew Cask;$(uuidgen | tr '[:upper:]' '[:lower:]')"
+          while IFS= read -r -d '' path; do
+            xattr -w com.apple.quarantine "$qattr" "$path"
+          done < <(find "$app" -print0)
+          spctl --assess --type execute --verbose=4 "$app"

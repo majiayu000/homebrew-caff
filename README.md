@@ -29,7 +29,7 @@ brew audit --cask --tap majiayu000/caff caff
 brew style "$(brew --repo majiayu000/caff)/Casks/caff.rb"
 ```
 
-The cask currently installs `Caff.app` from the upstream `v0.1.4` release. The
+The cask currently installs `Caff.app` from the upstream `v0.1.5` release. The
 zip checksum is pinned in [Casks/caff.rb](Casks/caff.rb).
 
 ## Uninstall

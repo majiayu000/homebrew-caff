@@ -1,6 +1,6 @@
 cask "caff" do
-  version "0.1.4"
-  sha256 "03fa8ba2dc398514d91472b4b4e52bdc95164533e5ce7533d92c9846b2377c1f"
+  version "0.1.5"
+  sha256 "761cb93e62249967dcfc599b7f13029d77b9d05b16ab7ae337fa2b0d5c17a263"
 
   url "https://github.com/majiayu000/caff/releases/download/v#{version}/Caff-#{version}.zip"
   name "Caff"
@@ -11,10 +11,10 @@ cask "caff" do
 
   app "Caff.app"
 
-  uninstall quit: "local.caff"
+  uninstall quit: "com.starlight.caff"
 
   zap trash: [
     "~/Library/Application Support/Caff",
-    "~/Library/Preferences/local.caff.plist",
+    "~/Library/Preferences/com.starlight.caff.plist",
   ]
 end
