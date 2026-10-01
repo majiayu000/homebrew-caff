@@ -42,3 +42,37 @@ brew uninstall --cask caff
 
 When a new Caff release is published, update `version`, `sha256`, and release
 notes together, then run the verification commands above before pushing.
+
+## After installation: keep an agent task awake
+
+Homebrew installs the app bundle; the executable is inside it rather than a
+separately installed `caff` shell command. Open Caff from Applications, then use
+[the agent keep-awake guide](https://github.com/majiayu000/caff/blob/main/docs/guides/keep-mac-awake-for-agent-tasks.md)
+for a timed session, status checks, and optional Claude/Codex activity hooks.
+The guide explains display sleep, battery limits, and the closed-lid boundary.
+
+Installing the cask does not configure agent hooks. An open terminal alone is not
+an activity signal; follow the upstream guide when you want activity-based sessions.
+
+## Installation and update questions
+
+**Which version will Homebrew install?** The version and checksum in
+[Casks/caff.rb](Casks/caff.rb) determine the package. A newer upstream release
+is not automatically the tap's current version. Inspect and update explicitly:
+
+```bash
+brew info --cask majiayu000/caff/caff
+brew update
+brew upgrade --cask majiayu000/caff/caff
+```
+
+**What are the macOS requirements?** The cask currently requires macOS Ventura
+or newer. Check the cask and [upstream release notes](https://github.com/majiayu000/caff/releases)
+for the current package and platform details before installing.
+
+**Where should I report a problem?** Download/checksum/cask errors belong in
+[this tap's issues](https://github.com/majiayu000/homebrew-caff/issues); app behavior,
+sessions, and hooks belong in [Caff issues](https://github.com/majiayu000/caff/issues).
+Include the OS, cask version, install command, and exact error, without credentials.
+
+[Tap license](LICENSE) · [App source and license](https://github.com/majiayu000/caff#readme)
