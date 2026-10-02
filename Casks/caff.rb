@@ -7,6 +7,7 @@ cask "caff" do
   desc "Menu bar app that keeps the machine awake during long-running agent tasks"
   homepage "https://github.com/majiayu000/caff"
 
+  depends_on arch: :arm64
   depends_on macos: :ventura
 
   app "Caff.app"
